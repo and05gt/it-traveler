@@ -25,27 +25,27 @@ class AuthService {
   }
 
   async login(body) {
-    const { data } = await clientFetch.post('/user/login', body)
+    const { data } = await clientFetch.post('/auth/login', body)
     const { accessToken } = data
 
     this.setToken(accessToken)
   }
 
   async register(body) {
-    const { data } = await clientFetch.post('/user/register', body)
+    const { data } = await clientFetch.post('/auth/register', body)
     const { accessToken } = data
 
     this.setToken(accessToken)
   }
 
   async logout() {
-    await clientFetch.get('/user/logout')
+    await clientFetch.post('/auth/logout')
 
     this.clearToken()
   }
 
   async refresh() {
-    const { data } = await clientFetch.post('/user/refresh')
+    const { data } = await clientFetch.post('/auth/refresh')
     const { accessToken } = data
 
     this.setToken(accessToken)

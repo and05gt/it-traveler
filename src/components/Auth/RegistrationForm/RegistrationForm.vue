@@ -28,7 +28,7 @@ const userData = reactive({
     />
     <IInput label="Пароль" type="password" v-model="userData.password" />
     <IButton class="w-full mt-10" variant="gradient" type="submit" :is-loading="props.isLoading">
-      Увійти
+      Створити аккаунт
     </IButton>
   </form>
 </template>
