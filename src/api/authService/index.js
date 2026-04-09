@@ -4,7 +4,7 @@ import { router } from '@/router/index.js'
 export const TOKEN_KEY = 'token'
 
 class AuthService {
-  #token = null
+  #token = localStorage.getItem(TOKEN_KEY) || null
 
   isLoggedIn() {
     return Boolean(this.#token)
@@ -15,6 +15,7 @@ class AuthService {
   }
 
   setToken(token) {
+    if (!token) return
     localStorage.setItem(TOKEN_KEY, token)
     this.#token = token
   }
@@ -26,14 +27,14 @@ class AuthService {
 
   async login(body) {
     const { data } = await clientFetch.post('/auth/login', body)
-    const { accessToken } = data
+    const { accessToken } = data.data
 
     this.setToken(accessToken)
   }
 
   async register(body) {
     const { data } = await clientFetch.post('/auth/register', body)
-    const { accessToken } = data
+    const { accessToken } = data.data
 
     this.setToken(accessToken)
   }
@@ -46,7 +47,7 @@ class AuthService {
 
   async refresh() {
     const { data } = await clientFetch.post('/auth/refresh')
-    const { accessToken } = data
+    const { accessToken } = data.data
 
     this.setToken(accessToken)
   }
@@ -63,6 +64,7 @@ clientFetch.interceptors.request.use((request) => {
       Authorization: `Bearer ${token}`
     }
   }
+
   return request
 })
 
