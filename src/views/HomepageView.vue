@@ -15,11 +15,15 @@ const map = ref(null)
 const mapMarkerLngLat = ref(null)
 const { isOpen, openModal, closeModal } = useModal()
 
-const { data, mutation: getPlaces } = useMutation({
+const {
+  data,
+  mutation: getPlaces,
+  isLoading: isPlacesLoading
+} = useMutation({
   mutationFn: () => getFavoritePlaces()
 })
 
-const favoritePlaces = computed(() => data.value?.data ?? [])
+const favoritePlaces = computed(() => data.value ?? [])
 
 const {
   mutation: addPlace,
@@ -39,9 +43,9 @@ const changeActiveId = (id) => {
 }
 
 const changePlace = (id) => {
-  const { lngLat } = favoritePlaces.value.find((place) => place.id === id)
+  const { coordinates } = favoritePlaces.value.find((place) => place.id === id)
   changeActiveId(id)
-  map.value.flyTo({ center: lngLat })
+  map.value.flyTo({ center: coordinates })
 }
 
 const handleMapClick = ({ lngLat }) => {
@@ -67,11 +71,14 @@ onMounted(() => {
 <template>
   <main class="flex h-screen">
     <div class="bg-white w-100 h-full shrink-0 overflow-auto pb-10">
+      <div v-if="isPlacesLoading" class="text-black px-6">Loading...</div>
       <FavoritePlaces
         :items="favoritePlaces"
         :active-id="activeId"
+        :is-places-loading="isPlacesLoading"
         @place-clicked="changePlace"
         @create="openModal"
+        @updated="getPlaces"
       />
       <CreateNewPlaceModal
         :is-open="isOpen"
@@ -92,7 +99,7 @@ onMounted(() => {
         @mb-created="(mapInstance) => (map = mapInstance)"
       >
         <MapboxMarker v-if="mapMarkerLngLat" :lngLat="mapMarkerLngLat" anchor="bottom">
-          <MarkerIcon class="w-12 h-12" />
+          <MarkerIcon class="w-12 h-12" is-active />
         </MapboxMarker>
         <MapboxMarker
           :key="place.id"
@@ -100,7 +107,7 @@ onMounted(() => {
           :lngLat="place.coordinates"
           anchor="bottom"
         >
-          <button @click="changeActiveId(place.id)">
+          <button @click.stop="changeActiveId(place.id)">
             <MarkerIcon class="w-12 h-12" />
           </button>
         </MapboxMarker>
