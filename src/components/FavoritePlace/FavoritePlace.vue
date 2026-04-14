@@ -23,10 +23,10 @@ const emit = defineEmits(['edit', 'delete'])
 </script>
 
 <template>
-  <section class="text-gray mb-6 last:mb-0">
+  <section class="text-gray">
     <div class="flex gap-3.5">
       <img class="w-19 h-19 shrink-0 rounded-md" :src="props.img" alt="Place image" />
-      <div>
+      <div class="w-full">
         <div class="flex items-center justify-between mb-2">
           <h2 class="font-medium text-sm leading-5 tracking-[-0.408px] text-[#2c2c2c]">
             {{ props.title }}
@@ -40,7 +40,7 @@ const emit = defineEmits(['edit', 'delete'])
             </FavoritePlaceIconButton>
           </div>
         </div>
-        <p class="w-60.25 text-xs font-normal leading-4 tracking-[-0.408px] line-clamp-3">
+        <p class="text-xs font-normal leading-4 tracking-[-0.408px] line-clamp-3">
           {{ props.description }}
         </p>
       </div>

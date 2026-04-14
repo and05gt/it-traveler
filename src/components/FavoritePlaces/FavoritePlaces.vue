@@ -88,17 +88,19 @@ const handleDeletePlace = () => {
       Додані маркери
     </div>
     <div v-if="items.length === 0 && !isPlacesLoading">Список порожній</div>
-    <FavoritePlace
-      :key="place.id"
-      v-for="place in props.items"
-      :title="place.title"
-      :description="place.description"
-      :img="place.img"
-      :is-active="place.id === props.activeId"
-      @click="emit('place-clicked', place.id)"
-      @edit="handleEditPlace(place.id)"
-      @delete="handleOpenConfirmationModal(place.id)"
-    />
+    <div class="flex flex-col gap-6">
+      <FavoritePlace
+        :key="place.id"
+        v-for="place in props.items"
+        :title="place.title"
+        :description="place.description"
+        :img="place.img"
+        :is-active="place.id === props.activeId"
+        @click="emit('place-clicked', place.id)"
+        @edit="handleEditPlace(place.id)"
+        @delete="handleOpenConfirmationModal(place.id)"
+      />
+    </div>
     <EditPlaceModal
       :is-open="isEditOpen"
       :place="selectedItem"

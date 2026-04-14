@@ -71,17 +71,25 @@ clientFetch.interceptors.request.use((request) => {
 clientFetch.interceptors.response.use(
   (response) => response,
   async (error) => {
-    const errorCode = error.response.status
+    const originalRequest = error.config
 
-    if (errorCode === 401) {
+    // 1. Check if the error is 401 and that we haven't already retried this specific request
+    // 2. CRITICAL: Do not attempt to refresh if the failed request WAS the refresh call itself
+    if (
+      error.response?.status === 401 &&
+      !originalRequest._retry &&
+      !originalRequest.url.includes('/auth/refresh')
+    ) {
+      originalRequest._retry = true
       try {
-        return await authService.refresh()
-      } catch (e) {
+        await authService.refresh()
+        return clientFetch(originalRequest)
+      } catch (refreshError) {
+        authService.logout()
         router.push('/auth/login')
-        return Promise.reject(e)
+        return Promise.reject(refreshError)
       }
     }
-
     return Promise.reject(error)
   }
 )
